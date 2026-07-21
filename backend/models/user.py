@@ -17,3 +17,4 @@ class User(Base):
     email = Column(String(150), unique=True, index=True, nullable=False)
     hashed_password = Column(String(255), nullable=False)
     role = Column(Enum(UserRole), default=UserRole.candidate, nullable=False)
+    resume_url = Column(String(255), nullable=True)
