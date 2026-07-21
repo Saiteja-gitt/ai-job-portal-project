@@ -52,3 +52,40 @@ export async function applyToJob(jobId, token) {
 
   return response.json();
 }
+export async function createJob(jobData, token) {
+  const response = await fetch(`${API_BASE_URL}/jobs/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(jobData),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || "Failed to create job");
+  }
+
+  return response.json();
+}
+export async function getMyApplications(token) {
+  const response = await fetch(`${API_BASE_URL}/applications/my`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) throw new Error("Failed to fetch applications");
+  return response.json();
+}
+export async function getJobApplicants(jobId, token) {
+  const response = await fetch(`${API_BASE_URL}/applications/job/${jobId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || "Failed to fetch applicants");
+  }
+
+  return response.json();
+}
