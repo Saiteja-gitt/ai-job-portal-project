@@ -11,16 +11,17 @@ import { useAuth } from "./context/AuthContext";
 function Navbar() {
   const { token, logout } = useAuth();
 
-  const linkClass = "text-gray-600 hover:text-indigo-600 font-medium transition-colors";
+  const linkClass = "text-indigo-100 hover:text-white font-medium transition-colors";
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200">
+    <nav className="bg-indigo-700 shadow-sm sticky top-0 z-50">
       <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link to="/jobs" className="text-xl font-bold text-indigo-600">
-          JobPortal
+       <Link to="/jobs" className="text-xl font-bold text-white">
+          JobPortal 
+          
         </Link>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center  gap-6">
           <Link to="/jobs" className={linkClass}>Jobs</Link>
 
           {!token && (
@@ -66,7 +67,7 @@ function App() {
     <BrowserRouter>
       <div className="min-h-screen bg-gray-50 flex flex-col">
   <Navbar />
-  <div className="flex-grow">
+  <div className="flex-grow pt-6">
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
