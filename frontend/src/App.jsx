@@ -6,6 +6,7 @@ import PostJob from "./pages/PostJob";
 import MyApplications from "./pages/MyApplications";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
 import { useAuth } from "./context/AuthContext";
+import UploadResume from "./pages/UploadResume";
 
 function Navbar() {
   const { token, logout } = useAuth();
@@ -24,6 +25,7 @@ function Navbar() {
       {token && (
         <>
           <Link to="/post-job" style={{ marginRight: "20px" }}>Post Job</Link>
+          <Link to="/upload-resume" style={{ marginRight: "20px" }}>Upload Resume</Link>
           <Link to="/my-applications" style={{ marginRight: "20px" }}>My Applications</Link>
           <Link to="/recruiter-dashboard" style={{ marginRight: "20px" }}>My Postings</Link>
           <button onClick={logout} style={{ marginLeft: "10px" }}>Logout</button>
@@ -62,6 +64,7 @@ function App() {
               <MyApplications />
             </ProtectedRoute>
           }
+          
         />
         <Route
           path="/recruiter-dashboard"
@@ -70,7 +73,16 @@ function App() {
               <RecruiterDashboard />
             </ProtectedRoute>
           }
+          
         />
+        <Route
+  path="/upload-resume"
+  element={
+    <ProtectedRoute>
+      <UploadResume />
+    </ProtectedRoute>
+  }
+/>
         <Route path="/" element={<Jobs />} />
       </Routes>
     </BrowserRouter>
