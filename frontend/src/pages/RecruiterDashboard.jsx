@@ -35,38 +35,47 @@ function RecruiterDashboard() {
   }
 
   return (
-    <div style={{ maxWidth: "700px", margin: "30px auto" }}>
-      <h2>My Job Postings</h2>
+    <div className="max-w-3xl mx-auto px-4 py-10">
+      <h2 className="text-3xl font-bold text-gray-800 mb-8">My Job Postings</h2>
 
-      {jobs.map((job) => (
-        <div
-          key={job.id}
-          style={{
-            border: "1px solid #ccc",
-            borderRadius: "8px",
-            padding: "16px",
-            marginBottom: "12px",
-          }}
-        >
-          <h3>{job.title}</h3>
-          <p>{job.company_name} — {job.location}</p>
-          <button onClick={() => handleViewApplicants(job.id)} style={{ padding: "6px 12px" }}>
-            View Applicants
-          </button>
+      <div className="space-y-4">
+        {jobs.map((job) => (
+          <div
+            key={job.id}
+            className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm"
+          >
+            <h3 className="text-lg font-semibold text-gray-800 mb-1">{job.title}</h3>
+            <p className="text-gray-600 mb-4">
+              {job.company_name} — {job.location}
+            </p>
 
-          {selectedJobId === job.id && (
-            <div style={{ marginTop: "12px", paddingLeft: "12px", borderLeft: "3px solid #eee" }}>
-              {error && <p style={{ color: "red" }}>{error}</p>}
-              {applicants.length === 0 && !error && <p>No applicants yet, or you don't own this job.</p>}
-              {applicants.map((app) => (
-                <p key={app.id}>
-                  Candidate ID: {app.candidate_id} — Status: {app.status}
-                </p>
-              ))}
-            </div>
-          )}
-        </div>
-      ))}
+            <button
+              onClick={() => handleViewApplicants(job.id)}
+              className="bg-indigo-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+            >
+              View Applicants
+            </button>
+
+            {selectedJobId === job.id && (
+              <div className="mt-4 pl-4 border-l-2 border-indigo-100 space-y-2">
+                {error && <p className="text-sm text-red-600">{error}</p>}
+                {applicants.length === 0 && !error && (
+                  <p className="text-sm text-gray-500">
+                    No applicants yet, or you don't own this job.
+                  </p>
+                )}
+                {applicants.map((app) => (
+                  <div key={app.id} className="text-sm text-gray-700">
+                    <span className="font-medium">Candidate ID:</span> {app.candidate_id}
+                    {" — "}
+                    <span className="capitalize">{app.status}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
