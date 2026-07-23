@@ -4,7 +4,7 @@ from typing import List
 
 from database.db import get_db
 from models.job import Job
-from models.user import User
+from models.user import User, UserRole
 from schemas.job import JobCreate, JobResponse
 from utils.auth import get_current_user
 
@@ -17,6 +17,9 @@ def create_job(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    if current_user.role != UserRole.recruiter:
+        raise HTTPException(status_code=403, detail="Only recruiters can post jobs")
+
     new_job = Job(
         title=job.title,
         description=job.description,

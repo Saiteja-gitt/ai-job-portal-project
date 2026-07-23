@@ -1,19 +1,25 @@
 import { useState, useEffect } from "react";
-import { getJobs, applyToJob } from "../services/api";
+import { getJobs, applyToJob, getMyApplications } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
 function Jobs() {
   const [jobs, setJobs] = useState([]);
+  const [appliedJobIds, setAppliedJobIds] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const { token } = useAuth();
 
   useEffect(() => {
-    async function fetchJobs() {
+    async function fetchData() {
       try {
-        const data = await getJobs();
-        setJobs(data);
+        const jobsData = await getJobs();
+        setJobs(jobsData);
+
+        if (token) {
+          const myApps = await getMyApplications(token);
+          setAppliedJobIds(myApps.map((app) => app.job_id));
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -21,8 +27,8 @@ function Jobs() {
       }
     }
 
-    fetchJobs();
-  }, []);
+    fetchData();
+  }, [token]);
 
   async function handleApply(jobId) {
     setMessage("");
@@ -34,6 +40,7 @@ function Jobs() {
     try {
       await applyToJob(jobId, token);
       setMessage("Application submitted successfully!");
+      setAppliedJobIds((prev) => [...prev, jobId]);
     } catch (err) {
       setMessage(err.message);
     }
@@ -70,38 +77,48 @@ function Jobs() {
       )}
 
       <div className="space-y-4">
-        {jobs.map((job) => (
-          <div
-            key={job.id}
-            className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow"
-          >
-            <div className="flex items-start justify-between mb-2">
-              <h3 className="text-lg font-semibold text-gray-800">{job.title}</h3>
-              <span
-                className={`text-xs font-medium px-3 py-1 rounded-full ${jobTypeColors[job.job_type] || "bg-gray-100 text-gray-700"}`}
-              >
-                {job.job_type.replace("_", " ")}
-              </span>
-            </div>
+        {jobs.map((job) => {
+          const alreadyApplied = appliedJobIds.includes(job.id);
 
-            <p className="text-gray-600 mb-1">
-              <span className="font-medium text-gray-800">{job.company_name}</span>
-              {" — "}
-              {job.location}
-            </p>
-            <p className="text-gray-600 mb-3">{job.description}</p>
-            <p className="text-sm text-gray-500 mb-4">
-              Salary: {job.salary || "Not specified"}
-            </p>
-
-            <button
-              onClick={() => handleApply(job.id)}
-              className="bg-indigo-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+          return (
+            <div
+              key={job.id}
+              className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow"
             >
-              Apply
-            </button>
-          </div>
-        ))}
+              <div className="flex items-start justify-between mb-2">
+                <h3 className="text-lg font-semibold text-gray-800">{job.title}</h3>
+                <span
+                  className={`text-xs font-medium px-3 py-1 rounded-full ${jobTypeColors[job.job_type] || "bg-gray-100 text-gray-700"}`}
+                >
+                  {job.job_type.replace("_", " ")}
+                </span>
+              </div>
+
+              <p className="text-gray-600 mb-1">
+                <span className="font-medium text-gray-800">{job.company_name}</span>
+                {" — "}
+                {job.location}
+              </p>
+              <p className="text-gray-600 mb-3">{job.description}</p>
+              <p className="text-sm text-gray-500 mb-4">
+                Salary: {job.salary || "Not specified"}
+              </p>
+
+              {alreadyApplied ? (
+                <span className="inline-block bg-green-100 text-green-700 px-5 py-2 rounded-lg font-medium">
+                  ✓ Applied
+                </span>
+              ) : (
+                <button
+                  onClick={() => handleApply(job.id)}
+                  className="bg-indigo-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+                >
+                  Apply
+                </button>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

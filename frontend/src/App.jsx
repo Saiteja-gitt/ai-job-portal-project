@@ -9,8 +9,7 @@ import UploadResume from "./pages/UploadResume";
 import { useAuth } from "./context/AuthContext";
 
 function Navbar() {
-  const { token, logout } = useAuth();
-
+  const { token, role, logout } = useAuth();
   const linkClass = "text-indigo-100 hover:text-white font-medium transition-colors";
 
   return (
@@ -37,19 +36,27 @@ function Navbar() {
           )}
 
           {token && (
-            <>
-              <Link to="/post-job" className={linkClass}>Post Job</Link>
-              <Link to="/upload-resume" className={linkClass}>Upload Resume</Link>
-              <Link to="/my-applications" className={linkClass}>My Applications</Link>
-              <Link to="/recruiter-dashboard" className={linkClass}>My Postings</Link>
-              <button
-                onClick={logout}
-                className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors font-medium"
-              >
-                Logout
-              </button>
-            </>
-          )}
+  <>
+    {role === "recruiter" && (
+      <>
+        <Link to="/post-job" className={linkClass}>Post Job</Link>
+        <Link to="/recruiter-dashboard" className={linkClass}>My Postings</Link>
+      </>
+    )}
+    {role === "candidate" && (
+      <>
+        <Link to="/upload-resume" className={linkClass}>Upload Resume</Link>
+        <Link to="/my-applications" className={linkClass}>My Applications</Link>
+      </>
+    )}
+    <button
+      onClick={logout}
+      className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+    >
+      Logout
+    </button>
+  </>
+)}
         </div>
       </div>
     </nav>
